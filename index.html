@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boletins Acadêmicos</title>
+    <!-- Font Awesome e Typography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --header-bg-start: #000000;
+            --header-bg-end: #1f183c;
+            --header-gradient: inear-gradient(135deg, #006aff 0%, #9d2f2a 100%);
+            
+            --accent-cyan: #00bcff;
+            --accent-blue: #0073e6;
+            --brand-gradient: linear-gradient(135deg, #0099ff 0%, #00bcff 100%);
+            
+            --text-main: #13102b;
+            --text-muted: #62657e;
+            --card-bg: #ffffff;
+            --radius-lg: 20px;
+            --radius-md: 10px;
+            --shadow-soft: 0 10px 30px -5px rgba(19, 16, 43, 0.05);
+            --shadow-hover: 0 20px 40px -10px rgba(19, 16, 43, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            background: var(--header-gradient);
+            color: white;
+            padding: 3.5rem 2rem 5.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: var(--bg-main);
+            clip-path: ellipse(60% 100% at 50% 100%);
+        }
+
+        header h2 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            color: #ffffff;
+        }
+
+        .coordinator-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            padding: 0.45rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .coordinator-badge i {
+            color: var(--accent-cyan);
+            font-size: 0.95rem;
+        }
+
+        .coordinator-badge strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #a5a6bd;
+            max-width: 650px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+
+        .filter-container {
+            max-width: 1200px;
+            margin: -2.8rem auto 2.5rem auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 30;
+        }
+
+        .filter-card {
+            background: #ffffff;
+            padding: 1.75rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3.2rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+            background: #ffffff;
+            color: var(--text-main);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 4px rgba(0, 188, 255, 0.12);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            min-width: 90px;
+        }
+
+        .filter-btn {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: var(--text-main);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+
+        .filter-btn.active {
+            background: var(--brand-gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(0, 153, 255, 0.35);
+        }
+
+        .results-bar {
+            max-width: 1200px;
+            margin: 0 auto 1.5rem auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto 5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .schools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .school-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            border: 1px solid #eef0f6;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+        }
+
+        .school-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: #dbe0ea;
+        }
+
+        .card-header-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .icon-container {
+            width: 48px;
+            height: 48px;
+            background: #f0f7ff;
+            color: var(--accent-blue);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .school-card:hover .icon-container {
+            background: var(--brand-gradient);
+            color: white;
+        }
+
+        .card-title-area h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+
+        .tag-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .segment-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .tag-fundamental { background: #e0f2fe; color: #0369a1; }
+        .tag-medio { background: #f3e8ff; color: #6b21a8; }
+        .tag-tecnico { background: #dcfce7; color: #166534; }
+        .tag-eja { background: #fef3c7; color: #92400e; }
+        .tag-integral { background: #ffedd5; color: #c2410c; }
+        .tag-parcial { background: #f1f5f9; color: #475569; }
+        .tag-noturno { background: #e2e8f0; color: #334155; }
+
+        .card-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            padding: 1rem 0;
+            margin-bottom: 1.25rem;
+            border-top: 1px dashed #e2e8f0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .metric-block {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .metric-val {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            background: #f4f6fa;
+            color: var(--accent-blue);
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: var(--brand-gradient);
+            color: white;
+            box-shadow: 0 4px 14px rgba(0, 153, 255, 0.3);
+        }
+
+        .btn-action i { transition: transform 0.2s ease; }
+        .btn-action:hover i { transform: translateX(4px); }
+
+        footer {
+            background: var(--header-bg-start);
+            color: #a5a6bd;
+            text-align: center;
+            padding: 3.5rem 2rem;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        footer strong { color: #f1f5f9; font-weight: 600; }
+
+        .system-badge {
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-cyan);
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            margin-top: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-muted);
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px dashed #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>Unidade Regional de Ensino de Bragança Paulista</h2>
+        <h1>Relatório de Desempenho Acadêmico</h1>
+        <div class="coordinator-badge">
+            <i class="fa-solid fa-user-tie"></i>
+            Coordenadora Regional de Ensino: <strong>Flávia Shirakashi Seimandi</strong>
+        </div>
+        <p> Gerenciamento de Desempenho Escolar</p>
+    </header>
+
+    <div class="filter-container">
+        <div class="filter-card">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar pelo nome da escola..." oninput="handleSearch()">
+            </div>
+
+            <div class="filter-row">
+                <span class="filter-label">Segmento:</span>
+                <button class="filter-btn active" onclick="setFilter('segment', 'all', this)">Todos</button>
+                <button class="filter-btn" onclick="setFilter('segment', 'fundamental', this)">Fundamental</button>
+                <button class="filter-btn" onclick="setFilter('segment', 'medio', this)">Médio</button>
+                <button class="filter-btn" onclick="setFilter('segment', 'tecnico', this)">Técnico</button>
+                <button class="filter-btn" onclick="setFilter('segment', 'eja', this)">EJA</button>
+            </div>
+
+            <div class="filter-row">
+                <span class="filter-label">Regime:</span>
+                <button class="filter-btn active" onclick="setFilter('period', 'all', this)">Todos</button>
+                <button class="filter-btn" onclick="setFilter('period', 'integral', this)">Tempo Integral</button>
+                <button class="filter-btn" onclick="setFilter('period', 'parcial', this)">Tempo Parcial</button>
+                <button class="filter-btn" onclick="setFilter('period', 'noturno', this)">Noturno</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="results-bar">
+        <span id="counterText">Carregando escolas...</span>
+    </div>
+
+    <main>
+        <div class="schools-grid" id="gridEscolas"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Sistema Integrado de Consulta Educacional. Todos os direitos reservados.</p>
+        <p><strong>Desenvolvido por: Equipe de Especialistas em Currículo.</strong></p>
+        <p>PEC de Tecnologia | Alex dos Santos Feitosa.</p>
+        <div class="system-badge"><i class="fa-solid fa-layer-group"></i> RDE ENGINE v4.0.0 | DYNAMIC SINGLE-PAGE LINKED</div>
+    </footer>
+
+   <script>
+    // IDs Mapeados para apontar dinamicamente para boletim.html?escola=ID
+    const dataEscolas = [
+        { id: "adelio", nome: "ADELIO FERRAZ DE CASTRO - 17802", segmentos: ["medio", "tecnico"], regime: ["integral"], matriculas: 265, turmas: 9 },
+        { id: "alcindo", nome: "ALCINDO BUENO DE ASSIS MINISTRO - 17991", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 1072, turmas: 32 },
+        { id: "aracy", nome: "ARACY BUENO CONTI PROFESSORA - 47077", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 444, turmas: 13 },
+        { id: "augusta", nome: "AUGUSTA DO AMARAL PECANHA PROFESSORA - 42602", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 618, turmas: 16 },
+        { id: "bruno_florenzano", nome: "BRUNO FLORENZANO PROFESSOR - 434814", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 636, turmas: 20 },
+        { id: "carlos_jose", nome: "CARLOS JOSE RIBEIRO PROFESSOR - 903848", segmentos: ["fundamental", "medio", "tecnico", "eja"], regime: ["parcial", "noturno"], matriculas: 812, turmas: 27 },
+        { id: "casper", nome: "CASPER LIBERO - 17760", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral", "noturno"], matriculas: 760, turmas: 24 },
+        { id: "cel_joao", nome: "CEL JOÃO ERNESTO FIGUEIREDO - 17814", segmentos: ["medio", "tecnico"], regime: ["integral"], matriculas: 394, turmas: 12 },
+        { id: "circe", nome: "CIRCE TEIXEIRA MUSA E SILVA PROFESSORA - 17954", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 662, turmas: 20 },
+        { id: "clelia", nome: "CLELIA DE BARROS LEITE DA SILVA PROFESSORA - 912897", segmentos: ["fundamental", "medio"], regime: ["parcial"], matriculas: 440, turmas: 16 },
+        { id: "constantino", nome: "CONSTANTINO SIMOES DE LIMA PROFESSOR - 40368", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 234, turmas: 10 },
+        { id: "bruno_gamberini", nome: "DOM BRUNO GAMBERINI - 6792", segmentos: ["fundamental"], regime: ["integral"], matriculas: 262, turmas: 8 },
+        { id: "edinaldo", nome: "EDINALDO APARECIDO SALLES ESTUDANTE - 49448", segmentos: ["fundamental"], regime: ["parcial"], matriculas: 473, turmas: 14 },
+        { id: "elza", nome: "ELZA PEÇANHA DE GODOY - 909373", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 534, turmas: 15 },
+        { id: "estanislau", nome: "ESTANISLAU AUGUSTO PROFESSOR - 17875", segmentos: ["medio", "tecnico"], regime: ["integral"], matriculas: 334, turmas: 11 },
+        { id: "fabio_hacl", nome: "FABIO HACL PINOLA PROF - 911677", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 288, turmas: 10 },
+        { id: "fernando_amos", nome: "FERNANDO AMOS SIRIANI DR - 921185", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial", "noturno"], matriculas: 746, turmas: 20 },
+        { id: "francisco_damante", nome: "FRANCISCO DAMANTE PROFESSOR - 17942", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 724, turmas: 21 },
+        { id: "francisco_aguiar", nome: "FRANCISCO DE AGUIAR PEÇANHA - 18004", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 502, turmas: 15 },
+        { id: "francisco_assis", nome: "FRANCISCO DE ASSIS GONCALVES CORONEL - 17985", segmentos: ["fundamental"], regime: ["parcial"], matriculas: 629, turmas: 18 },
+        { id: "francisco_derosa", nome: "FRANCISCO DEROSA - 17848", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral", "noturno"], matriculas: 565, turmas: 19 },
+        { id: "fulvia", nome: "FULVIA MARIA APARECIDA CANCHERINI FAZZIO PROFESSORA - 49924", segmentos: ["fundamental", "medio"], regime: ["parcial"], matriculas: 614, turmas: 18 },
+        { id: "gabriel_silva", nome: "GABRIEL DA SILVA PROFESSOR - 17917", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 596, turmas: 16 },
+        { id: "helena_bonfa", nome: "HELENA JOSE BONFA PROFESSORA - 912918", segmentos: ["fundamental", "medio"], regime: ["parcial"], matriculas: 137, turmas: 7 },
+        { id: "henrique_hacl", nome: "HENRIQUE MIGUEL HACL PROFESSOR - 479111", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 170, turmas: 7 },
+        { id: "honorio", nome: "HONORIO HEINRICH BERNARD NACKE MONSENHOR - 19525", segmentos: ["medio", "tecnico"], regime: ["integral"], matriculas: 319, turmas: 11 },
+        { id: "inaldo_manta", nome: "INALDO MANTA DESPORTISTA - 912888", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 280, turmas: 9 },
+        { id: "ismael_aguiar", nome: "ISMAEL AGUIAR LEME - 18036", segmentos: ["fundamental"], regime: ["parcial"], matriculas: 392, turmas: 12 },
+        { id: "izolina", nome: "IZOLINA PATROCINIO DE LIMA PROFESSORA - 47089", segmentos: ["fundamental", "medio"], regime: ["parcial", "noturno"], matriculas: 529, turmas: 18 },
+        { id: "joao_antonio", nome: "JOAO ANTONIO RODRIGUES PROFESSOR - 903838", segmentos: ["fundamental"], regime: ["parcial"], matriculas: 447, turmas: 15 },
+        { id: "joao_apocalipse", nome: "JOAO APOCALIPSE PROFESSOR - 17838", segmentos: ["medio", "tecnico"], regime: ["integral"], matriculas: 135, turmas: 6 },
+        { id: "joao_moraes", nome: "JOAO DE MORAES GOES - 17851", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 362, turmas: 12 },
+        { id: "joao_evangelista", nome: "JOAO EVANGELISTA MARIANO DA COSTA LOBO PROFESSOR - 907315", segmentos: ["fundamental"], regime: ["parcial"], matriculas: 474, turmas: 14 },
+        { id: "jose_alvim", nome: "JOSE ALVIM - 18053", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial", "noturno"], matriculas: 1269, turmas: 35 },
+        { id: "jose_dini", nome: "JOSE DINI - 917746", segmentos: ["fundamental", "medio"], regime: ["parcial", "noturno"], matriculas: 183, turmas: 8 },
+        { id: "jose_franco", nome: "JOSE FRANCO CRAVEIRO - 17759", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 606, turmas: 20 },
+        { id: "jose_guilherme", nome: "JOSE GUILHERME - 17978", segmentos: ["fundamental", "eja"], regime: ["integral", "noturno"], matriculas: 549, turmas: 18 },
+        { id: "jose_manoel", nome: "JOSE MANOEL ALVARES ROSENDE PROFESSOR - 45627", segmentos: ["fundamental", "medio"], regime: ["parcial", "noturno"], matriculas: 963, turmas: 27 },
+        { id: "jose_mauricio", nome: "JOSE MAURICIO DA ROCHA DOM - 17784", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 629, turmas: 19 },
+        { id: "jose_nantala", nome: "JOSE NANTALA BADUE PROFESSOR - 907340", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 832, turmas: 20 },
+        { id: "jose_pires", nome: "JOSE PIRES ALVIM - 42584", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 618, turmas: 16 },
+        { id: "jose_siqueira", nome: "JOSE SIQUEIRA BUENO - 17905", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 337, turmas: 13 },
+        { id: "jose_tavares", nome: "JOSE TAVARES PROFESSOR - 17796", segmentos: ["medio", "tecnico"], regime: ["integral"], matriculas: 211, turmas: 6 },
+        { id: "josephina", nome: "JOSEPHINA GALVAO DE FRANCA ANDREUCCI PROFESSORA - 17711", segmentos: ["fundamental", "medio"], regime: ["parcial", "noturno"], matriculas: 376, turmas: 13 },
+        { id: "julio_cesar", nome: "JULIO CESAR FLORIDO RAFAELI PROFESSOR - 498452", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 772, turmas: 24 },
+        { id: "juvenal_alvim", nome: "JUVENAL ALVIM MAJOR - 18041", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 526, turmas: 15 },
+        { id: "luiz_roberto", nome: "LUIZ ROBERTO PINHEIRO ALEGRETTI PROFESSOR - 903851", segmentos: ["fundamental"], regime: ["integral"], matriculas: 321, turmas: 9 },
+        { id: "luzia_della_rosa", nome: "LUZIA DELLA ROSA HACL PROFESSORA - 919214", segmentos: ["fundamental"], regime: ["parcial"], matriculas: 186, turmas: 8 },
+        { id: "manoel_ferraz", nome: "MANOEL FERRAZ PROFESSOR - 20850", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 469, turmas: 14 },
+        { id: "marcos_antonio", nome: "MARCOS ANTONIO DA SILVA GUIMARAES PROFESSOR - 907327", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 622, turmas: 16 },
+        { id: "maria_cecilia", nome: "MARIA CECÍLIA TEIXEIRA PINTO PROFESSORA - 905410", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 352, turmas: 11 },
+        { id: "maria_do_carmo", nome: "MARIA DO CARMO BARBOSA PROFESSORA - 17887", segmentos: ["fundamental", "medio"], regime: ["parcial", "noturno"], matriculas: 757, turmas: 22 },
+        { id: "maria_jose", nome: "MARIA JOSE MORAES SALLES PROFESSORA - 909359", segmentos: ["medio", "tecnico"], regime: ["integral"], matriculas: 379, turmas: 10 },
+        { id: "maria_odette", nome: "MARIA ODETTE DA SILVEIRA LEITE FRATTINI PROFESSORA - 912906", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 443, turmas: 14 },
+        { id: "mateus_nunes", nome: "MATEUS NUNES DE SIQUEIRA PADRE - 17899", segmentos: ["fundamental", "medio"], regime: ["parcial"], matriculas: 551, turmas: 19 },
+        { id: "mathilde", nome: "MATHILDE TEIXEIRA DE MORAES PROFESSORA - 900187", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 667, turmas: 20 },
+        { id: "narciso_pieroni", nome: "NARCISO PIERONI - 17735", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 609, turmas: 22 },
+        { id: "paulo_silva", nome: "PAULO SILVA PROFESSOR - 17772", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 483, turmas: 15 },
+        { id: "joao_ernesto_vanni", nome: "PROFESSOR JOÃO ERNESTO DE ALMEIDA VANNI - 564680", segmentos: ["fundamental"], regime: ["parcial"], matriculas: 523, turmas: 16 },
+        { id: "maria_eloiza", nome: "PROFESSORA MARIA ELOIZA PINHEIRO RAMOS - 499043", segmentos: ["fundamental", "medio"], regime: ["integral"], matriculas: 244, turmas: 7 },
+        { id: "renato_azevedo", nome: "RENATO DE AZEVEDO REZENDE - 912852", segmentos: ["fundamental"], regime: ["integral"], matriculas: 137, turmas: 5 },
+        { id: "sebastiao_ferraz", nome: "SEBASTIÃO FERRAZ DE CAMPOS PROF - 49931", segmentos: ["fundamental", "medio", "tecnico"], regime: ["integral"], matriculas: 287, turmas: 10 },
+        { id: "siles_coli", nome: "SILES COLI PROFESSOR - 912864", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial", "noturno"], matriculas: 524, turmas: 16 },
+        { id: "silvio_carvalho", nome: "SILVIO DE CARVALHO PINTO JUNIOR DOUTOR - 909361", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial"], matriculas: 861, turmas: 23 },
+        { id: "zilah_barreto", nome: "ZILAH BARRETO PACITTI PROFESSORA - 17929", segmentos: ["fundamental", "medio", "tecnico"], regime: ["parcial", "noturno"], matriculas: 777, turmas: 24 }
+    ];
+
+    function getSchoolIcon(escola) {
+        if (escola.segmentos.includes("tecnico")) return "fa-graduation-cap";
+        if (escola.segmentos.includes("medio") || escola.segmentos.includes("eja")) return "fa-book-open";
+        if (escola.matriculas > 800) return "fa-building-columns";
+        if (escola.segmentos.length === 1 && escola.segmentos.includes("fundamental")) return "fa-pencil";
+        return "fa-school";
+    }
+
+    let state = { search: '', segment: 'all', period: 'all' };
+
+    function renderGrid() {
+        const grid = document.getElementById('gridEscolas');
+        grid.innerHTML = '';
+        let count = 0;
+
+        dataEscolas.forEach(escola => {
+            const matchSearch = escola.nome.toLowerCase().includes(state.search.toLowerCase());
+            const matchSegment = state.segment === 'all' || escola.segmentos.includes(state.segment);
+            const matchPeriod = state.period === 'all' || escola.regime.includes(state.period);
+
+            if (matchSearch && matchSegment && matchPeriod) {
+                count++;
+
+                let tagsHTML = '';
+                escola.segmentos.forEach(seg => {
+                    let label = seg === 'medio' ? 'Médio' : seg === 'tecnico' ? 'Técnico' : seg.charAt(0).toUpperCase() + seg.slice(1);
+                    tagsHTML += `<span class="segment-tag tag-${seg}">${label}</span>`;
+                });
+
+                escola.regime.forEach(reg => {
+                    let labelReg = reg.charAt(0).toUpperCase() + reg.slice(1);
+                    tagsHTML += `<span class="segment-tag tag-${reg}">${labelReg}</span>`;
+                });
+
+                const iconeAtribuido = getSchoolIcon(escola);
+                
+                // REDIRECIONA PARA O BOLETIM ÚNICO USANDO A CHAVE "id"
+                const pageLink = `boletim.html?escola=${escola.id}`;
+
+                const card = document.createElement('div');
+                card.className = 'school-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="card-header-info">
+                            <div class="icon-container"><i class="fa-solid ${iconeAtribuido}"></i></div>
+                            <div class="card-title-area">
+                                <h3>${escola.nome}</h3>
+                                <div class="tag-group">${tagsHTML}</div>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div class="metric-block">
+                                <i class="fa-solid fa-users"></i>
+                                <div>Alunos: <span class="metric-val">${escola.matriculas.toLocaleString('pt-BR')}</span></div>
+                            </div>
+                            <div class="metric-block">
+                                <i class="fa-solid fa-chalkboard"></i>
+                                <div>Turmas: <span class="metric-val">${escola.turmas}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="${pageLink}" class="btn-action">Acessar Boletins <i class="fa-solid fa-arrow-right"></i></a>
+                `;
+                grid.appendChild(card);
+            }
+        });
+
+        document.getElementById('counterText').innerText = `Exibindo ${count} de ${dataEscolas.length} escolas encontradas`;
+
+        if (count === 0) {
+            grid.innerHTML = `
+                <div class="no-results">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 2rem; margin-bottom: 1rem; color: #94a3b8;"></i>
+                    <p>Nenhuma escola encontrada para os filtros selecionados.</p>
+                </div>
+            `;
+        }
+    }
+
+    function handleSearch() {
+        state.search = document.getElementById('searchInput').value;
+        renderGrid();
+    }
+
+    function setFilter(type, value, btn) {
+        btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state[type] = value;
+        renderGrid();
+    }
+
+    renderGrid();
+</script>
+</body>
+</html>
